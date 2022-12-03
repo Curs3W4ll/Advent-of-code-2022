@@ -35,16 +35,17 @@ asciiartsnow: str = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 @dataclass
 class Arguments:
     dayToLaunch: int = datetime.today().day
-    gettingContentFromStdin: bool = True
+    gettingContentFromStdin: bool = False
     fileToGetContentFrom: str = None
 
-    def __init__(self, dayToLaunch: int = datetime.today().day, gettingContentFromStdin: bool = True, fileToGetContentFrom: str = None):
+    def __init__(self, dayToLaunch: int = datetime.today().day, gettingContentFromStdin: bool = False, fileToGetContentFrom: str = None):
         self.dayToLaunch = dayToLaunch
         self.gettingContentFromStdin = gettingContentFromStdin
         self.fileToGetContentFrom = fileToGetContentFrom
 
 
 def readInput() -> List[str]:
+    print("Reading from stdin...")
     input = []
     for line in stdin:
         input.append(line.rstrip())
@@ -57,16 +58,18 @@ def readFile(filePath: str) -> List[str]:
         input: List[str] = f.readlines()
 
     [content.append(elem.rstrip()) for elem in input]
+    print(f"Content got from {filePath}")
     return content
 
 def readArgs():
     args: Arguments = Arguments()
 
     for arg in argv[1:]:
-        if arg.isnumeric():
+        if arg == "stdin":
+            args.gettingContentFromStdin = True
+        elif arg.isnumeric():
             args.dayToLaunch = int(arg)
         else:
-            args.gettingContentFromStdin = False
             args.fileToGetContentFrom = arg
 
     return args
@@ -76,16 +79,20 @@ def entrypoint():
     args: Arguments = readArgs()
     content: List[str] = None
 
+    if (args.dayToLaunch > 25 or args.dayToLaunch < 1):
+        args.dayToLaunch = 1
     if not args.gettingContentFromStdin:
         try:
-            content = readFile(args.fileToGetContentFrom)
+            if args.fileToGetContentFrom:
+                content = readFile(args.fileToGetContentFrom)
+            else:
+                print(f"Trying reading file ./{args.dayToLaunch}/input.txt...")
+                content = readFile(f"./{args.dayToLaunch}/input.txt")
         except:
             content = readInput()
     else:
         content = readInput()
 
-    if (args.dayToLaunch > 25 or args.dayToLaunch < 1):
-        args.dayToLaunch = 5
     print(asciiart, end="")
     message: str = f"Starting day {args.dayToLaunch}"
     messagereplace: str = "".join('~' * len(message))
