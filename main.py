@@ -48,7 +48,7 @@ def readInput() -> List[str]:
     print("Reading from stdin...")
     input = []
     for line in stdin:
-        input.append(line.rstrip())
+        input.append(line.rstrip('\n'))
     return input
 
 def readFile(filePath: str) -> List[str]:
@@ -57,7 +57,7 @@ def readFile(filePath: str) -> List[str]:
     with open(filePath) as f:
         input: List[str] = f.readlines()
 
-    [content.append(elem.rstrip()) for elem in input]
+    [content.append(elem.rstrip('\n')) for elem in input]
     print(f"Content got from {filePath}")
     return content
 
