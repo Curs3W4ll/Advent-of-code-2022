@@ -131,7 +131,7 @@ def run(input: List[str]):
     for i in range(0, len(trees)):
         for y in range(0, width):
             sum += (1 if isVisible(y, i, trees) else 0)
-            scores.append(getViewScore(y, i, trees, True))
+            scores.append(getViewScore(y, i, trees))
 
     print(f"{sum} trees visible from outside")
     print(f"Maximum scenic score is {max(scores)}")
